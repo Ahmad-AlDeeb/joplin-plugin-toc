@@ -64,7 +64,6 @@ joplin.plugins.register({
 		// Which makes the TOC interactive so that when the user clicks on a link, the note is scrolled to right header.
 		await joplin.views.panels.addScript(panel, './webview.js'); 
 
-		
 		// Later, this is where you'll want to update the TOC
 		async function updateTocView() {
 			// Get the current note from the workspace.
@@ -107,8 +106,9 @@ joplin.plugins.register({
 				await joplin.views.panels.setHtml(panel, 'Please select a note to view the table of content');
 			}
 		}
+		// Also update the TOC when the plugin starts
+		updateTocView();
 
-		
 		//////////////// event handlers on note selection & note change  ////////////////
 		// This event will be triggered when the user selects a different note
 		await joplin.workspace.onNoteSelectionChange(() => {
@@ -120,13 +120,17 @@ joplin.plugins.register({
 		await joplin.workspace.onNoteChange(() => {
 				updateTocView();
 		});
+
+		//  listen to the message using the onMessage() handler.
+		// Then from this handler, you can call the scrollToHash command and pass it the slug (or hash).
+		await joplin.views.panels.onMessage(panel, (message) => {
+			if (message.name === 'scrollToHash') {
+					// As the name says, the scrollToHash command makes the note scroll
+					// to the provided hash.
+					joplin.commands.execute('scrollToHash', message.hash)
+			}
+	});
 		////////////////////////////////////////////////////////////////////////////
-
-		// Also update the TOC when the plugin starts
-		updateTocView();
-		
-
-
 	},
 });
 
