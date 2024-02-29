@@ -2,13 +2,13 @@
 /* which you can use to better integrate the view to the UI */
 /* For example, using these variables you can use a dark background in dark mode, and a light one in light mode. */
 .container {
-  background-color: red;
+  background-color: var(--joplin-background-color);
   color: var(--joplin-color);
   font-size: var(--joplin-font-size);
   font-family: var(--joplin-font-family);
 }
 
 .toc-item a {
-  color: blue;
+  color: var(--joplin-color);
   text-decoration: none;
 }
