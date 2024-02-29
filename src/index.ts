@@ -3,25 +3,57 @@ import joplin from 'api';
 
 // Register the plugin
 joplin.plugins.register({
+
 	// Run initialisation code in the onStart event handler
 	// Note that due to the plugin multi-process architecture, you should
 	// always assume that all function calls and event handlers are async.
 	onStart: async function() {
-
+		
 		// Later, this is where you'll want to update the TOC
 		async function updateTocView() {
 			// Get the current note from the workspace.
 			const note = await joplin.workspace.selectedNote();
+			
+			// Reset the slugs	
+			slugs = {}; 
 
 			// Keep in mind that it can be `null` if nothing is currently selected!
 			if (note) {
 				const headers = noteHeaders(note.body);
-				console.info('The note has the following headers', headers);
+
+				// First create the HTML for each header:
+				const itemHtml = [];
+				for (const header of headers) {
+						const slug = headerSlug(header.text);
+						// - We indent each header based on header.level.
+
+						// - The slug will be needed later on once we implement clicking on a header.
+						//   We assign it to a "data" attribute, which can then be easily retrieved from JavaScript
+
+						// - Also make sure you escape the text before inserting it in the HTML to avoid XSS attacks
+						//   and rendering issues. For this use the `escapeHtml()` function you've added earlier.
+						itemHtml.push(`
+								<p class="toc-item" style="padding-left:${(header.level - 1) * 15}px">
+										<a class="toc-item-link" href="#" data-slug="${escapeHtml(slug)}">
+												${escapeHtml(header.text)}
+										</a>
+								</p>
+						`);
+				}
+
+				// Finally, insert all the headers in a container and set the webview HTML:
+				await joplin.views.panels.setHtml(panel, `
+				<div class="container">
+						${itemHtml.join('\n')}
+				</div>
+		`);
 			} else {
-					console.info('No note is selected');
+				await joplin.views.panels.setHtml(panel, 'Please select a note to view the table of content');
 			}
 		}
 
+		
+		//////////////// event handlers on note selection & note change  ////////////////
 		// This event will be triggered when the user selects a different note
 		await joplin.workspace.onNoteSelectionChange(() => {
 				updateTocView();
@@ -33,8 +65,16 @@ joplin.plugins.register({
 				updateTocView();
 		});
 
-			// Also update the TOC when the plugin starts
-			updateTocView();
+		// Also update the TOC when the plugin starts
+		updateTocView();
+		
+		//////////////// Creating a webview /////////////// 
+		// Create the panel object
+		const panel = await joplin.views.panels.create('panel_1');
+
+			// Set some initial content while the TOC is being created
+			await joplin.views.panels.setHtml(panel, 'Loading...');
+
 	},
 });
 
