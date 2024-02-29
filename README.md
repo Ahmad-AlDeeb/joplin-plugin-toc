@@ -1,5 +1,5 @@
-# Joplin Plugin
+# Joplin Table of Content Plugin
 
-This is your new Joplin plugin. It is suggested that you use this README file to document your plugin.
+[Tutorial Link](https://joplinapp.org/help/api/tutorials/toc_plugin)
 
-For information on how to build or publish the plugin, please see [GENERATOR_DOC.md](./GENERATOR_DOC.md)
+[Tutorial Repository](https://github.com/laurent22/joplin/tree/dev/packages/app-cli/tests/support/plugins/toc)
