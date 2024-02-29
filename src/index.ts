@@ -15,8 +15,8 @@ joplin.plugins.register({
 
 			// Keep in mind that it can be `null` if nothing is currently selected!
 			if (note) {
-					const headers = noteHeaders(note.body);
-					console.info('Note content has changed! New note is:', note);
+				const headers = noteHeaders(note.body);
+				console.info('The note has the following headers', headers);
 			} else {
 					console.info('No note is selected');
 			}
