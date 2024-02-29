@@ -1,0 +1,14 @@
+/* you can access from there a number of theme variables, */
+/* which you can use to better integrate the view to the UI */
+/* For example, using these variables you can use a dark background in dark mode, and a light one in light mode. */
+.container {
+  background-color: red;
+  color: var(--joplin-color);
+  font-size: var(--joplin-font-size);
+  font-family: var(--joplin-font-family);
+}
+
+.toc-item a {
+  color: blue;
+  text-decoration: none;
+}

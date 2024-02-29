@@ -50,6 +50,14 @@ joplin.plugins.register({
 	// Note that due to the plugin multi-process architecture, you should
 	// always assume that all function calls and event handlers are async.
 	onStart: async function() {
+		//////////////// Creating a webview /////////////// 
+		// Create the panel object
+		const panel = await joplin.views.panels.create('panel_1');
+		// Set some initial content while the TOC is being created
+		await joplin.views.panels.setHtml(panel, 'Loading...');
+		// Add the CSS file to the view, right after it has been created:
+		await joplin.views.panels.addScript(panel, './webview.css');
+
 		
 		// Later, this is where you'll want to update the TOC
 		async function updateTocView() {
@@ -106,16 +114,12 @@ joplin.plugins.register({
 		await joplin.workspace.onNoteChange(() => {
 				updateTocView();
 		});
+		////////////////////////////////////////////////////////////////////////////
 
 		// Also update the TOC when the plugin starts
 		updateTocView();
 		
-		//////////////// Creating a webview /////////////// 
-		// Create the panel object
-		const panel = await joplin.views.panels.create('panel_1');
 
-			// Set some initial content while the TOC is being created
-			await joplin.views.panels.setHtml(panel, 'Loading...');
 
 	},
 });
