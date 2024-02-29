@@ -53,10 +53,16 @@ joplin.plugins.register({
 		//////////////// Creating a webview /////////////// 
 		// Create the panel object
 		const panel = await joplin.views.panels.create('panel_1');
+		
 		// Set some initial content while the TOC is being created
 		await joplin.views.panels.setHtml(panel, 'Loading...');
+		
 		// Add the CSS file to the view, right after it has been created:
 		await joplin.views.panels.addScript(panel, './webview.css');
+		
+		// By Using an external JavaScript file that will handle the click events
+		// Which makes the TOC interactive so that when the user clicks on a link, the note is scrolled to right header.
+		await joplin.views.panels.addScript(panel, './webview.js'); 
 
 		
 		// Later, this is where you'll want to update the TOC
