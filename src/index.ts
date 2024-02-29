@@ -68,3 +68,13 @@ function headerSlug(headerText) {
     slugs[s] = num + 1;
     return output.join('-');
 }
+// Utility function to escape HTML
+// From https://stackoverflow.com/a/6234804/561309
+function escapeHtml(unsafe:string) {
+	return unsafe
+			.replace(/&/g, "&amp;")
+			.replace(/</g, "&lt;")
+			.replace(/>/g, "&gt;")
+			.replace(/"/g, "&quot;")
+			.replace(/'/g, "&#039;");
+}
