@@ -1,6 +1,48 @@
 // Import the Joplin API
 import joplin from 'api';
 
+// Extract the headers from that note in order to build the Table Of Content from it
+// Quick and dirty solution is to get all the lines that start with any number of # followed by a space
+// Return an array of headers, with the text and level (H1, H2, etc.) of header:
+function noteHeaders(noteBody:string) {
+	const headers = [];
+	const lines = noteBody.split('\n');
+	for (const line of lines) {
+			const match = line.match(/^(#+)\s(.*)*/);
+			if (!match) continue;
+			headers.push({
+					level: match[1].length,
+					text: match[2],
+			});
+	}
+	return headers;
+}
+// To generate the slug for each header
+// A slug is an identifier which is used to link to a particular header.
+// Essentially a header text like "My Header" is converted to "my-header"
+// If there's already a slug with that name, a number is appended to it.
+const uslug = require('@joplin/fork-uslug');
+let slugs = {};
+function headerSlug(headerText) {
+    const s = uslug(headerText);
+    let num = slugs[s] ? slugs[s] : 1;
+    const output = [s];
+    if (num > 1) output.push(num);
+    slugs[s] = num + 1;
+    return output.join('-');
+}
+// Utility function to escape HTML
+// From https://stackoverflow.com/a/6234804/561309
+function escapeHtml(unsafe:string) {
+	return unsafe
+			.replace(/&/g, "&amp;")
+			.replace(/</g, "&lt;")
+			.replace(/>/g, "&gt;")
+			.replace(/"/g, "&quot;")
+			.replace(/'/g, "&#039;");
+}
+////////////////////////////////////////////////////////////////////////
+
 // Register the plugin
 joplin.plugins.register({
 
@@ -78,43 +120,3 @@ joplin.plugins.register({
 	},
 });
 
-// Extract the headers from that note in order to build the Table Of Content from it
-// Quick and dirty solution is to get all the lines that start with any number of # followed by a space
-// Return an array of headers, with the text and level (H1, H2, etc.) of header:
-function noteHeaders(noteBody:string) {
-	const headers = [];
-	const lines = noteBody.split('\n');
-	for (const line of lines) {
-			const match = line.match(/^(#+)\s(.*)*/);
-			if (!match) continue;
-			headers.push({
-					level: match[1].length,
-					text: match[2],
-			});
-	}
-	return headers;
-}
-// To generate the slug for each header
-// A slug is an identifier which is used to link to a particular header.
-// Essentially a header text like "My Header" is converted to "my-header"
-// If there's already a slug with that name, a number is appended to it.
-const uslug = require('@joplin/fork-uslug');
-let slugs = {};
-function headerSlug(headerText) {
-    const s = uslug(headerText);
-    let num = slugs[s] ? slugs[s] : 1;
-    const output = [s];
-    if (num > 1) output.push(num);
-    slugs[s] = num + 1;
-    return output.join('-');
-}
-// Utility function to escape HTML
-// From https://stackoverflow.com/a/6234804/561309
-function escapeHtml(unsafe:string) {
-	return unsafe
-			.replace(/&/g, "&amp;")
-			.replace(/</g, "&lt;")
-			.replace(/>/g, "&gt;")
-			.replace(/"/g, "&quot;")
-			.replace(/'/g, "&#039;");
-}
